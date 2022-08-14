@@ -33,6 +33,19 @@
     <string>This app needs access to location when in the background.</string>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
+	<key>NSCameraUsageDescription</key>
+    <string>camera for taking photos</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>microphone</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>photos</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>Calendars</string>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>Music!</string>
+    <key>kTCCServiceMediaLibrary</key>
+    <string>media</string>
+
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>

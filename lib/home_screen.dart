@@ -32,67 +32,86 @@ class _HomeScreenState extends State<HomeScreen> {
     print(long);
   }
 
+  void requestMicPermission() async {
+    var status = await Permission.microphone.status;
+    if (status.isGranted) {
+      print("Permission is granted");
+    } else if (status.isDenied) {
+      if (await Permission.microphone.request().isGranted) {
+        print("Permission was granted");
+      } else {
+        buildDialog();
+      }
+    }
+  }
+
+  void requestPhonePermission() async {
+    var status = await Permission.phone.status;
+    if (status.isGranted) {
+      print("Permission is granted");
+    } else if (status.isDenied) {
+      if (await Permission.phone.request().isGranted) {
+        print("Permission was granted");
+      } else {
+        buildDialog();
+      }
+    }
+  }
+
+  void requestCameraPermission() async {
+    var status = await Permission.camera.status;
+    if (status.isGranted) {
+      print("Permission is granted");
+    } else if (status.isDenied) {
+      if (await Permission.camera.request().isGranted) {
+        print("Permission was granted");
+      } else {
+        buildDialog();
+      }
+    }
+  }
+
   void requestStoragePermission() async {
     var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      // not requested yet
-      await Permission.storage.request();
-    } else {
-      print('Permission isGranted ');
-    }
-
-    if (!status.isDenied) {
-      // not requested yet
-      await Permission.storage.request();
-    } else {
-      print('Permission isDenied');
-    }
-    if (status.isPermanentlyDenied) {
-      print('to use storage this feature granted permission ');
-    }
-    if (!status.isPermanentlyDenied) {
-      // not requested yet
-      await Permission.storage.request();
+    if (status.isGranted) {
+      print("Permission is granted");
+    } else if (status.isDenied) {
+      if (await Permission.storage.request().isGranted) {
+        print("Permission was granted");
+      } else {
+        buildDialog();
+      }
     }
   }
 
-  requestLocationPermission() async {
-    var locationStatus = await Permission.location.status;
-
-    if (locationStatus.isGranted) {
-      print('Granted');
-
-      // here get current location
-      getCurrentLocation();
-    }
-    if (locationStatus.isPermanentlyDenied) {
-      print('to use location this feature granted permission ');
-    }
-    if (locationStatus.isDenied) {
-      //noting
-
-      print('notGranted yet ');
-      await Permission.location.request();
+  void requestLocationPermission() async {
+    var status = await Permission.location.status;
+    if (status.isGranted) {
+      await getCurrentLocation();
+      print("Permission is granted");
+    } else if (status.isDenied) {
+      if (await Permission.location.request().isGranted) {
+        print("Permission was granted");
+        await getCurrentLocation();
+      } else {
+        buildDialog();
+      }
     }
   }
 
-  requestCalenderPermission() async {
-    var calenderState = await Permission.calendar.status;
+  void requestCalenderPermission() async {
+    var status = await Permission.calendar.status;
+    if (status.isGranted) {
+      await openDatePicker();
 
-    if (calenderState.isGranted) {
-      print('Granted');
-
-      // here get current location
-      openDatePicker();
-    }
-    if (calenderState.isPermanentlyDenied) {
-      print('to use location this feature granted permission ');
-    }
-    if (calenderState.isDenied) {
-      //noting
-
-      print('notGranted yet ');
-      await Permission.calendar.request();
+      print("Permission is granted");
+    } else if (status.isDenied) {
+      if (await Permission.calendar.request().isGranted) {
+        print("Permission was granted");
+        await openDatePicker();
+      } else {
+        buildDialog();
+      }
     }
   }
 
@@ -161,10 +180,51 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () {
                       requestCalenderPermission();
                     },
-                    child: const Text('Calender'))
+                    child: const Text('Calender')),
+                ElevatedButton(
+                    onPressed: () {
+                      requestCameraPermission();
+                      // requestCameraPermission();
+                    },
+                    child: const Text('Camera')),
+                ElevatedButton(
+                    onPressed: () {
+                      requestPhonePermission();
+                    },
+                    child: const Text('Phone')),
+                ElevatedButton(
+                    onPressed: () {
+                      requestMicPermission();
+                    },
+                    child: const Text('Microphone'))
               ]),
         ),
       ),
     );
   }
+
+  void buildDialog() => WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("permission"),
+            content: Text(
+                "You will not be able to use this feature without enabling it now?"),
+            actions: <Widget>[
+              ElevatedButton(
+                  child: Text("settings"),
+                  onPressed: () {
+                    openAppSettings();
+                    Navigator.of(context).pop();
+                  }),
+              ElevatedButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      });
 }
