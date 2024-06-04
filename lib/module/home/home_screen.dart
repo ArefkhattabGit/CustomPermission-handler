@@ -1,43 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:untitled2/helper/permission_helper.dart';
+import 'package:untitled2/module/home/home_controller.dart';
 
-class HomeScreen extends StatefulWidget {
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  double? _lat;
-  double? _long;
-  List<Placemark>? _placemarks;
-
-  @override
-  void initState() {
-    super.initState();
-    _getLocation();
-  }
-
-  Future<void> _getLocation() async {
-
-    await PermissionsHelper.instance.requestLocationPermission(
-        onGranted: () async {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-      PermissionsHelper.instance.getCurrentLocation();
-      setState(() {
-        _lat = position.latitude;
-        _long = position.longitude;
-        _placemarks = placemarks;
-      });
-    });
-  }
+class HomeScreen extends StatelessWidget {
+  final controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -51,17 +18,18 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  PermissionsHelper.instance
-                      .requestStoragePermission(onGranted: () {});
+                  PermissionsHelper.instance.requestStoragePermission();
                 },
                 child: const Text('File access'),
               ),
               const SizedBox(height: 10),
-              Text('LAT: $_lat' ?? ''),
+              Text('LAT: ${controller.lat}' ?? ''),
               const SizedBox(height: 10),
-              Text('LNG: $_long' ?? ''),
+              Text('LNG: ${controller.long}' ?? ''),
               const SizedBox(height: 10),
-              Text('ADDRESS: ${_placemarks?[0].country}' ?? ''),
+              Text('ADDRESS: ${controller.marks?[0].country}' ?? ''),
+              Text('name: ${controller.marks?[0].name}' ?? ''),
+              Text('street: ${controller.marks?[0].street}' ?? ''),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
