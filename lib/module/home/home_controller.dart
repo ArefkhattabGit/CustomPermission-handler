@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:untitled2/helper/permission_helper.dart';
 
 class HomeController extends GetxController {
-
   @override
   void onInit() {
     super.onInit();
@@ -27,12 +26,10 @@ class HomeController extends GetxController {
       );
 
       PermissionsHelper.instance.getCurrentLocation();
-
-      update([
-        lat = position.latitude,
-        long = position.longitude,
-        marks = placemarks
-      ]);
+      lat = position.latitude;
+      long = position.longitude;
+      marks = placemarks;
+      update();
     });
   }
 }
